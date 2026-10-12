@@ -4,7 +4,21 @@
 'use strict';
 const CHAT = { sb: null, ch: null, msgs: [], open: false, unread: 0, online: 0, state: 'off', last: 0, err: '' };
 const CHAT_MAX = 150, CHAT_KEEP = 80, CHAT_GAP = 2500;
-const chatCid = () => { try { let c = localStorage.getItem('jxidle_cid'); if (!c) { c = Math.random().toString(36).slice(2, 12) + Date.now().toString(36); localStorage.setItem('jxidle_cid', c); } return c; } catch (e) { return 'anon' + Math.random().toString(36).slice(2, 10); } };
+const CHAT_CID = (() => {
+  try {
+    let cid = sessionStorage.getItem('jxidle_cid');
+    if (!cid) {
+      cid = window.crypto && typeof window.crypto.randomUUID === 'function'
+        ? window.crypto.randomUUID()
+        : Math.random().toString(36).slice(2, 12) + Date.now().toString(36);
+      sessionStorage.setItem('jxidle_cid', cid);
+    }
+    return cid;
+  } catch (e) {
+    return 'anon' + Math.random().toString(36).slice(2, 10);
+  }
+})();
+const chatCid = () => CHAT_CID;
 const chatName = () => String(S && (S.name || (FAC[S.fac] && FAC[S.fac].n)) || 'Vô danh').slice(0, 20);
 const chatTime = t => { const d = new Date(t); return `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`; };
 
